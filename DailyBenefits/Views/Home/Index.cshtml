@@ -1,0 +1,83 @@
+﻿@model IEnumerable<DailyBenefits.Model.Record>
+
+    <script>
+        var days = @ViewBag.SignedDaysJson;
+    </script>
+
+    <div class="qiandao-con clear">
+        <div class="qiandao-left">
+            <div class="qiandao-left-top clear">
+                <div class="current-date">2016年1月6日</div>
+                <div class="qiandao-history qiandao-tran qiandao-radius" id="js-qiandao-history">我的签到</div>
+            </div>
+            <div class="qiandao-main" id="js-qiandao-main">
+                <ul class="qiandao-list" id="js-qiandao-list"></ul>
+            </div>
+        </div>
+        <div class="qiandao-right">
+            <div class="qiandao-top">
+                <div class="just-qiandao qiandao-sprits" id="js-just-qiandao">
+                </div>
+            </div>
+            <div class="qiandao-bottom">
+                <div class="qiandao-rule-list">
+                    <h4>签到规则</h4>
+                    <p>每次签到可以获得10~50枚金币不等</p>
+                    <p>金币可用作查看测试数据、兑换小礼品等</p>
+                </div>
+            </div>
+        </div>
+        <!-- 我的签到 layer start -->
+        <div class="qiandao-layer qiandao-history-layer">
+            <div class="qiandao-layer-con qiandao-radius">
+                <a href="javascript:;" class="close-qiandao-layer qiandao-sprits"></a>
+                <ul class="qiandao-history-inf clear">
+                    <li>
+                        <p>本月签到</p>
+                        <h4>@Model.Count()</h4>
+                    </li>
+                    <li>
+                        <p>本月累计奖励</p>
+                        <h4>@Model.Sum(x => x.Coins)</h4>
+                    </li>
+                </ul>
+                <div class="qiandao-history-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>签到日期</th>
+                                <th>奖励</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <table>
+                            @foreach (var x in Model)
+                            {
+                            <tr>
+                                <td>@x.Time</td>
+                                <td>@x.Coins 枚金币</td>
+                                <td>签到奖励</td>
+                            </tr>
+                            }
+                        </table>
+                    </table>
+                </div>
+            </div>
+            <div class="qiandao-layer-bg"></div>
+        </div>
+        <!-- 我的签到 layer end -->
+        <!-- 签到 layer start -->
+        <div class="qiandao-layer qiandao-active">
+            <div class="qiandao-layer-con qiandao-radius">
+                <a href="javascript:;" class="close-qiandao-layer qiandao-sprits"></a>
+                <div class="yiqiandao clear">
+                    <div class="yiqiandao-icon qiandao-sprits"></div>
+                </div>
+                <div class="qiandao-jiangli qiandao-sprits">
+                    <span class="qiandao-jiangli-num" id="coin-count"><em>枚金币</em></span>
+                </div>
+            </div>
+            <div class="qiandao-layer-bg"></div>
+        </div>
+        <!-- 签到 layer end -->
+    </div>
