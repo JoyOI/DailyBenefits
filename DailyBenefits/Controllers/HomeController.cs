@@ -58,7 +58,7 @@ namespace DailyBenefits.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Sign([FromServices] JoyOIUC UC, CancellationToken token)
+        public IActionResult Sign([FromServices] JoyOIUC UC, CancellationToken token)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("user")))
             {
@@ -67,23 +67,27 @@ namespace DailyBenefits.Controllers
 
             var openId = Guid.Parse(HttpContext.Session.GetString("user"));
             var today = DateTime.UtcNow.Date;
-            if (await DB.Records.AnyAsync(x => x.UserId == openId && x.Time >= today, token))
+
+            lock (rand)
             {
-                return Content("Signed");
+                if (DB.Records.Any(x => x.UserId == openId && x.Time >= today))
+                {
+                    return Content("Signed");
+                }
+
+                var rec = new Record
+                {
+                    Coins = rand.Next(10, 50),
+                    Time = DateTime.UtcNow,
+                    UserId = openId
+                };
+
+                DB.Records.Add(rec);
+                UC.IncreaseExtensionCoinAsync(openId, HttpContext.Session.GetString("token"), "Coin", rec.Coins).Wait();
+                DB.SaveChanges();
+
+                return Content(rec.Coins.ToString());
             }
-
-            var rec = new Record
-            {
-                Coins = rand.Next(10, 50),
-                Time = DateTime.UtcNow,
-                UserId = openId
-            };
-
-            DB.Records.Add(rec);
-            await UC.IncreaseExtensionCoinAsync(openId, HttpContext.Session.GetString("token"), "Coin", rec.Coins);
-            await DB.SaveChangesAsync(token);
-
-            return Content(rec.Coins.ToString());
         }
     }
 }
