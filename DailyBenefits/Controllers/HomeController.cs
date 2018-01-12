@@ -29,7 +29,7 @@ namespace DailyBenefits.Controllers
                 .Where(x => x.UserId == openId && x.Time >= firstDayOfMonth)
                 .ToListAsync(token);
 
-            ViewBag.SignedDaysJson = Newtonsoft.Json.JsonConvert.SerializeObject(records.Select(x => x.Time.Day));
+            ViewBag.SignedDaysJson = Newtonsoft.Json.JsonConvert.SerializeObject(records.Select(x => x.Time.Day - 1));
 
             return View(records);
         }
